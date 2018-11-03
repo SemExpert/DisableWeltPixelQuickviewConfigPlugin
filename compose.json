@@ -1,0 +1,19 @@
+{
+  "name": "semexpert/module-disable-weltpixel-quickview-config-plugin",
+  "description": "Disable an unnecesary plugin from the extension which causes issues with tests",
+  "require": {
+    "php": "~5.6.5|7.0.2|7.0.4|~7.0.6|~7.1.0",
+    "weltpixel/m2-weltpixel-quickview": "1.5.* | 1.6.*"
+  },
+  "type": "magento2-module",
+  "version": "0.1.0",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ]
+  }
+}
