@@ -24,7 +24,6 @@ env:
   - secure: PxyYj1FgrJM1ZaJybr4bmlQdA/H3shQZthq1877ogwtDfm3u7ideaQJAF3KFN6M1Lbi9Yez2vsSQs/EgZ+p38JAR5IHgvG0T5rF0XmuxDAy/unZbwlH0SpbaJ8ZZ+pCHaySQfIdIpHoTvULsqa1PV008TrTILXf16Nkx+9vKkRlwMy+yuZ4NSOqJ5SD9BwlHpmZcxKX0Wbta0+TzR14qeDQl5Nm/bAScsMEOijUdZRICpQRtN96zwc4sSEy0kxDm1ofhahe9byeX0B3ehndnJxHEEX6tqB2yL5qSt+mTbeSIDUl/a5JV+ul6TxiRGqt8FVnqOHoGdTUUtyELywaQ7wpNTSSl3ItK/vMmPSPrrhXrFabvm4Kr5kzvuns1tGt90gLSsFGyj35+3ZOwRiaW6YSpdL6eQaGS9SVj9lkHs7NBG9Hp0g4S6L44K4eb0zKIjmzY+xkrdSOmD/1OkdHahDDpfMnzdOqfYYmnoYcGXrcAck0xu40hsjRK0TiBdwPJvwpuFl/369a7J/QCNv5imPJ4S1Ixasbq+2WIZIe1gPK3pnEMu798R9rsdEe2FnpB/OXZSy+Njh6cwsuU7osrwQbY6UkNhdYeO8zdPgE0me66OZYfCcob6Q6U+pERLgQ+MqqSD/aywf7oqtLVHaWzD8EGI5iBnSVBXUxlXKa5L9A=
   - secure: fqxKHer/YVqNTdL0DpmdAvGkfYqFpC+JEOuwqCg4EBJdcvRSnIITvannVrY7yFbwgN2rTULWiJ1VsYemzWS2M1NR1RNsaKE5Gfy2rRbTF9vraZMRqn8Jf5Kgz7HL+5SsO9V+613dxux8GhSekR+Hb1ciZbZXSQzoC24g8UVE1Csq3/6liSJyx/y1sx2wjzBG7yYkWW5CwNAP5amC5BV77UNv3bXNv247VVCdW9w8v0RM+nE2a0fwhL95ZV2pBmXbW9rc+jKGUCfAyxSHQIdbvoevGNW50hWXPOgOrUeRiSF2unJ5hUWY2SVNgo8qFCXCp5XuCDcww09MU1J7d4t1ULVUlqe7mZSy4I97WkYj3aFiV1uOZNA+PVODGyt4BicVxGlX7pBgP8lAYDJmE3EctuEPu2gjd3ZqDTjcxEmftd3bnksXXIOjOFDtmwCx8nrghy3jMZLTwC5kbFl6TfLicIn+/6VQ2Djc4kNKjqURfnelvJ6YFZIMJMrjYIAIsW8QBdwiN8heEsQiAbtjQl8Mr8MD8XVnOVc48icjBklGiTfWoKzLPi5EmI4DqyuXhIuIXjMFEI8MOX2MBlkw7KKOllu6yMT8lz0RcWfauUH7zDe8RkVfSe0sqZRZBoTk7JEgs6O6EUeZTl0dL7eg3rJCTlPuV9awfnLWqVSnbRR3ilM=
   matrix:
-  - MAGENTO_VERSION=2.2.1 TEST_SUITE=static
   - MAGENTO_VERSION=2.2.1 TEST_SUITE=integration INTEGRATION_INDEX=1
   - MAGENTO_VERSION=2.2.1 TEST_SUITE=integration INTEGRATION_INDEX=2
   - MAGENTO_VERSION=2.2.1 TEST_SUITE=integration INTEGRATION_INDEX=3
@@ -40,12 +39,13 @@ before_install:
 - cd magento2
 - "./dev/travis/before_install.sh"
 install:
+- export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
 - echo "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"${MAGENTO_USERNAME}\",\"password\":\"${MAGENTO_PASSWORD}\"}}}"
   > auth.json
 - composer config minimum-stability dev
-- composer install --no-interaction --prefer-dist
 - composer config repositories.magento composer https://repo.magento.com
+- composer install --no-interaction --prefer-dist
 - composer config repositories.test_target git https://github.com/${TRAVIS_REPO_SLUG}.git
-- composer require $MODULE_UNDER_TEST dev-$TRAVIS_BRANCH
+- composer require $MODULE_UNDER_TEST dev-$BRANCH
 before_script:  bash ./dev/travis/before_script.sh
 script: phpunit -c dev/tests/$TEST_SUITE
