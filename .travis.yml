@@ -43,7 +43,9 @@ install:
 - echo "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"${MAGENTO_USERNAME}\",\"password\":\"${MAGENTO_PASSWORD}\"}}}"
   > auth.json
 - composer config minimum-stability dev
-- composer config repositories.magento composer https://repo.magento.com
+#- composer config repositories.magento composer https://repo.magento.com
+- composer config repositories.quickview git https://github.com/WeltPixel_frontend
+- composer config repositories.backend git https://github.com/WeltPixel_backend
 - composer install --no-interaction --prefer-dist
 - composer config repositories.test_target git https://github.com/${TRAVIS_REPO_SLUG}.git
 - composer require $MODULE_UNDER_TEST dev-$BRANCH
